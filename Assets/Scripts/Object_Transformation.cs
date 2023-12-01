@@ -5,21 +5,26 @@ using UnityEngine;
 public class Object_Transformation : MonoBehaviour
 {
     private float Heat;
-    private bool Heating, Heated;
-    private Vector3 ScaleChange, rotateChange;
-    public bool Rotated;
+    public float changeSpeed, t;
+    public GameObject cube;
+    public Renderer ObjectRender;
+    public Color coolColor, heatColor;
+    public bool Heating, Heated, Cooling;
+    private Vector3 xChange,zChange, yChange;
 
     // Start is called before the first frame update
     void Start()
     {
-        ScaleChange = new Vector3 (0.5f, -0.2f, 0.2f);
-        rotateChange = new Vector3(0.5f, 0.2f, -0.2f);
+        zChange = new Vector3 (0.2f, -0.2f, 0.2f);
+        yChange = new Vector3(0.2f, 0.2f, -0.2f);
+        xChange = new Vector3(-0.2f, 0.2f, 0.2f);
     }
 
     // Update is called once per frame
     void Update()
     {
        Heat = Mathf.Clamp(Heat, 0, 20);
+        t = Mathf.Clamp(t, 0, 100);
         
         if(Heat >= 10)
         {
@@ -28,48 +33,90 @@ public class Object_Transformation : MonoBehaviour
         {
             Heated = false;
         }
-        if(Input.GetKeyDown(KeyCode.E) && Heated)
+
+       
+
+        if (Input.GetKeyDown(KeyCode.H))
         {
-            if(Rotated)
-            {
-                ScaleChangeTwo();
-            }
-            if(!Rotated)
-            {
-                ScaleChangeOne();
-            }
-            
-        }
-        if(Input.GetKeyDown(KeyCode.R))
-        {
-            transform.Rotate(90, 0, 0);
-            Rotated = !Rotated;
+            t = 0;
+            Heating = !Heating;
         }
         
+        
+ 
     }
     private void FixedUpdate()
     {
+        
         if (!Heating)
         {
+            
             Heat -= 0.3f;
+            
+            if (ObjectRender.material.color != coolColor)
+            {
+                t = t + (Time.deltaTime * changeSpeed);
+                ObjectRender.material.color = Color.Lerp(ObjectRender.material.color, coolColor, t);
+            }
+
         }
-        if (Input.GetKey(KeyCode.H))
+        if (Heating)
         {
+            
             Heat += 1;
-            Heating = true;
+             
+            if (ObjectRender.material.color != heatColor)
+            {
+                t = t + (Time.deltaTime * changeSpeed);
+                ObjectRender.material.color = Color.Lerp(ObjectRender.material.color, heatColor, t);
+            }
         }
-        else
-        {
-            Heating = false;
-        }
+        
     }
 
-    private void ScaleChangeOne()
+    private void OnCollisionEnter(Collision collision)
     {
-        transform.localScale += ScaleChange;
+        if (collision.transform.tag == "Hammer")
+        {
+            Vector3 normal = collision.contacts[0].normal;
+
+            if (normal == transform.forward)
+            {
+                Debug.Log("FORWARD");
+                cube.transform.localScale += yChange;
+            }
+
+            else if (normal == -(transform.forward))
+            {
+                Debug.Log("BACKWARD");
+                cube.transform.localScale += yChange;
+            }
+
+            else if (normal == transform.right)
+            {
+                Debug.Log("RIGHT");
+                cube.transform.localScale += xChange;
+            }
+
+            else if (normal == -(transform.forward))
+            {
+                Debug.Log("LEFT");
+                cube.transform.localScale += xChange;
+            }
+
+            else if (normal == transform.up)
+            {
+                Debug.Log("Down");
+                cube.transform.localScale += zChange;
+            }
+
+            else if (normal == -(transform.up))
+            {
+                Debug.Log("Up");
+                cube.transform.localScale += zChange;
+            }
+        }
+        
     }
-    private void ScaleChangeTwo()
-    {
-        transform.localScale += rotateChange;
-    }
+
 }
