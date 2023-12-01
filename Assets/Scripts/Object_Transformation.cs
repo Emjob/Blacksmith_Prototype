@@ -23,6 +23,7 @@ public class Object_Transformation : MonoBehaviour
     // Update is called once per frame
     void Update()
     {
+
        Heat = Mathf.Clamp(Heat, 0, 20);
         t = Mathf.Clamp(t, 0, 100);
         
@@ -37,6 +38,11 @@ public class Object_Transformation : MonoBehaviour
         {
             t = 0;
             Heating = !Heating;
+        }
+
+        if(cube.transform.localScale.x <= 0 || cube.transform.localScale.y <= 0 || cube.transform.localScale.z <= 0)
+        {
+            Destroy(gameObject);
         }
     }
     private void FixedUpdate()
