@@ -4,12 +4,12 @@ using UnityEngine;
 
 public class Object_Transformation : MonoBehaviour
 {
-    private float Heat;
-    public float changeSpeed, t;
+    
+    private float changeSpeed, t, Heat;
     public GameObject cube;
     public Renderer ObjectRender;
     public Color coolColor, heatColor;
-    public bool Heating, Heated, Cooling;
+    private bool Heating, Heated;
     private Vector3 xChange,zChange, yChange;
 
     // Start is called before the first frame update
@@ -33,21 +33,16 @@ public class Object_Transformation : MonoBehaviour
         {
             Heated = false;
         }
-
-       
-
         if (Input.GetKeyDown(KeyCode.H))
         {
             t = 0;
             Heating = !Heating;
         }
-        
-        
- 
     }
     private void FixedUpdate()
     {
-        
+        BoxCollider collider = GetComponent<BoxCollider>();
+        collider.size = cube.transform.localScale;
         if (!Heating)
         {
             
@@ -63,7 +58,7 @@ public class Object_Transformation : MonoBehaviour
         if (Heating)
         {
             
-            Heat += 1;
+            Heat += 0.3f;
              
             if (ObjectRender.material.color != heatColor)
             {
@@ -76,7 +71,7 @@ public class Object_Transformation : MonoBehaviour
 
     private void OnCollisionEnter(Collision collision)
     {
-        if (collision.transform.tag == "Hammer")
+        if (collision.transform.tag == "Hammer" && Heated)
         {
             Vector3 normal = collision.contacts[0].normal;
 
