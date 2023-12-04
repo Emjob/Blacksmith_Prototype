@@ -5,7 +5,7 @@ using UnityEngine;
 public class Object_Transformation : MonoBehaviour
 {
     
-    private float changeSpeed, t, Heat;
+    public float changeSpeed, t, Heat, heatChange;
     public GameObject cube;
     public Renderer ObjectRender;
     public Color coolColor, heatColor;
@@ -34,11 +34,7 @@ public class Object_Transformation : MonoBehaviour
         {
             Heated = false;
         }
-        if (Input.GetKeyDown(KeyCode.H))
-        {
-            t = 0;
-            Heating = !Heating;
-        }
+       
 
         if(cube.transform.localScale.x <= 0 || cube.transform.localScale.y <= 0 || cube.transform.localScale.z <= 0)
         {
@@ -46,13 +42,11 @@ public class Object_Transformation : MonoBehaviour
         }
     }
     private void FixedUpdate()
-    {
-        BoxCollider collider = GetComponent<BoxCollider>();
-        collider.size = cube.transform.localScale;
+    { 
         if (!Heating)
         {
             
-            Heat -= 0.3f;
+            Heat -= heatChange * Time.deltaTime;
             
             if (ObjectRender.material.color != coolColor)
             {
@@ -64,7 +58,7 @@ public class Object_Transformation : MonoBehaviour
         if (Heating)
         {
             
-            Heat += 0.3f;
+            Heat += heatChange * Time.deltaTime;
              
             if (ObjectRender.material.color != heatColor)
             {
@@ -72,9 +66,25 @@ public class Object_Transformation : MonoBehaviour
                 ObjectRender.material.color = Color.Lerp(ObjectRender.material.color, heatColor, t);
             }
         }
-        
+        BoxCollider collider = GetComponent<BoxCollider>();
+        collider.size = cube.transform.localScale;
     }
-
+    private void OnTriggerEnter(Collider other)
+    {
+        if(other.CompareTag("Fire"))
+        {
+            Heating = true;
+            t = 0;
+        }
+    }
+    private void OnTriggerExit(Collider other)
+    {
+        if(other.CompareTag("Fire"))
+        {
+            Heating = false;
+            t = 0;
+        }
+    }
     private void OnCollisionEnter(Collision collision)
     {
         if (collision.transform.tag == "Hammer" && Heated)
@@ -116,6 +126,10 @@ public class Object_Transformation : MonoBehaviour
                 Debug.Log("Up");
                 cube.transform.localScale += zChange;
             }
+        }
+        if (collision.transform.name == "Hilt" && Heated)
+        {
+            collision.transform.parent = transform.parent;
         }
         
     }
