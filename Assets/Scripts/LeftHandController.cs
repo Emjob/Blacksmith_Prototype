@@ -36,7 +36,7 @@ public class LeftHandController : MonoBehaviour
 
         void OnTriggerEnter(Collider other)
         {
-            if (other.Tag == "Grabbable")
+            if (other.tag == "Grabbable")
             {
                 
             }
