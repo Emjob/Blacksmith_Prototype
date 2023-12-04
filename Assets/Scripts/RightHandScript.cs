@@ -5,7 +5,7 @@ using UnityEngine;
 public class RightHandScript : MonoBehaviour
 {
     private Vector3 Pos;
-    private float Offset = 30f;
+    private float Offset = 10f;
     void Start()
     {
         
