@@ -5,19 +5,15 @@ using UnityEngine;
 public class LeftHandController : MonoBehaviour
 {
     private float speed = 10;
-    private int minX, maxX, minZ, maxZ;
 
 
     void Start()
     {
-        minX = -1;
-        minZ = -1;
-        maxX = 10;
-        maxZ = 10;
+
     }
     void Update()
     {
-        if (Input.GetKey(KeyCode.W) && this.transform.position.z < maxZ)
+        if (Input.GetKey(KeyCode.W))
         {
             transform.Translate(Vector3.up*speed*Time.deltaTime);
         }
